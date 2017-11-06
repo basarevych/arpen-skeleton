@@ -3,18 +3,19 @@
  * @module commands/help
  */
 const argvParser = require('argv');
+const Base = require('./base');
 
 /**
  * Command to print usage
  */
-class Help {
+class Help extends Base {
     /**
      * Create the service
      * @param {App} app                 The application
      * @param {Util} util               Utility service
      */
     constructor(app, util) {
-        this._app = app;
+        super(app);
         this._util = util;
     }
 
@@ -66,7 +67,8 @@ class Help {
         await this._app.info(
             'Usage:\tcmd <command> [<parameters]\n\n' +
             'Commands:\n' +
-            '\thelp\t\tPrint help about any other command\n'
+            '\thelp\t\tPrint help about any other command\n' +
+            '\tcreate-cert\tCreate self-signed SSL certificate\n'
 
         );
         process.exit(0);
@@ -79,29 +81,22 @@ class Help {
     async helpHelp(argv) {
         await this._app.info(
             'Usage:\tcmd help <command>\n\n' +
-            '\tPrint help for the given command'
+            '\tPrint help for the given command\n'
         );
         process.exit(0);
     }
 
     /**
-     * Log error and terminate
-     * @param {...*} args
+     * Cert command
      * @return {Promise}
      */
-    async error(...args) {
-        try {
-            await args.reduce(
-                async (prev, cur) => {
-                    await prev;
-                    return this._app.error(cur.fullStack || cur.stack || cur.message || cur);
-                },
-                Promise.resolve()
-            );
-        } catch (error) {
-            // do nothing
-        }
-        process.exit(1);
+    async helpCreateCert(argv) {
+        await this._app.info(
+            'Usage:\tcmd create-cert <address>\n\n' +
+            '\tThis command will create self-signed certificates in the certs/ subdirectory\n' +
+            '\t<address> is either hostname or IP address to use in the certificate\n'
+        );
+        process.exit(0);
     }
 }
 
