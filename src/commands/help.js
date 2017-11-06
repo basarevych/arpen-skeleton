@@ -53,8 +53,10 @@ class Help extends Base {
             return this.usage();
 
         let method = this[`help${this._util.dashedToCamel(args.targets[1], true)}`];
-        if (typeof method !== 'function')
-            return this.usage();
+        if (typeof method !== 'function') {
+            await this._app.error('Unknown command');
+            process.exit(1);
+        }
 
         return method.call(this, argv);
     }
